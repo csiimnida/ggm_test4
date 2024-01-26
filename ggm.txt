@@ -6,3 +6,6 @@
 
 잠길떄는 컨드롤 z를 누른다
 루룰 난라? 저요?
+git add .
+fit commit - m "나의 첫 커밋"
+git push origin master

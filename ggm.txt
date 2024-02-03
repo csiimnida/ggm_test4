@@ -25,3 +25,35 @@ git clone 링크
     오늘은 ㄷㅋ에서 git수업을 했다
 roblox it's free free fre free freeaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaroblox i rike roblox i have 어.... 뭘 가지고 있지?
 ? 난 와=ㅐ 이걸 쓴거지?
+끄아 더 쓰고싶어 
+local roblox
+local DataStoreService = game:GetService("DataStoreService")
+local WarningDataStore = DataStoreService:GetDataStore("WarningDataStore")
+
+local function getWarnings(player)
+    local success, result = pcall(function()
+        return WarningDataStore:GetAsync(tostring(player.UserId))
+    end)
+
+    if success then
+        return result or 0
+    else
+        warn("Failed to get warnings for player " .. player.Name)
+        return 0
+    end
+end
+
+local function setWarnings(player, value)
+    local success, errorMessage = pcall(function()
+        WarningDataStore:SetAsync(tostring(player.UserId), value)
+    end)
+
+    if not success then
+        warn("Failed to set warnings for player " .. player.Name .. ": " .. errorMessage)
+    end
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    local warnings = getWarnings(player)
+    print(player.Name .. "'s warnings: " .. warnings) -- Optional: You can print the player's warnings on join
+end)

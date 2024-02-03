@@ -57,3 +57,33 @@ game.Players.PlayerAdded:Connect(function(player)
     local warnings = getWarnings(player)
     print(player.Name .. "'s warnings: " .. warnings) -- Optional: You can print the player's warnings on join
 end)
+game.Players.PlayerRemoving:Connect(function(player)
+    -- You can leave this blank if you don't want to clear data when a player leaves
+end)
+
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        local args = string.split(message, " ")
+
+        if args[1] == "/경고" then
+            local targetPlayer = game.Players:FindFirstChild(args[2])
+
+            if targetPlayer and tonumber(args[3]) then
+                local currentWarnings = getWarnings(targetPlayer)
+                local newWarnings = currentWarnings + tonumber(args[3])
+
+                setWarnings(targetPlayer, newWarnings)
+            else
+                warn("Invalid command usage. Use /경고 <플레이어 이름> <int>")
+            end
+        elseif args[1] == "/리셋" then
+            local targetPlayer = game.Players:FindFirstChild(args[2])
+
+            if targetPlayer then
+                setWarnings(targetPlayer, 0)
+            else
+                warn("Invalid command usage. Use /리셋 <플레이어 이름>")
+            end
+        end
+    end)
+end)

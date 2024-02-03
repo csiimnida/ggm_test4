@@ -87,3 +87,63 @@ game.Players.PlayerAdded:Connect(function(player)
         end
     end)
 end)
+local DataStoreService = game:GetService("DataStoreService")
+local WarningDataStore = DataStoreService:GetDataStore("WarningDataStore")
+
+local function getWarnings(player)
+    local success, result = pcall(function()
+        return WarningDataStore:GetAsync(tostring(player.UserId))
+    end)
+
+    if success then
+        return result or 0
+    else
+        warn("E001")
+        return 0
+    end
+end
+
+local function setWarnings(player, value)
+    local success, errorMessage = pcall(function()
+        WarningDataStore:SetAsync(tostring(player.UserId), value)
+    end)
+
+    if not success then
+        warn("E002")
+    end
+end
+
+game.Players.PlayerAdded:Connect(function(player)
+    local warnings = getWarnings(player)
+    print(player.Name .. " 경고 알림: " .. warnings)
+end)
+
+game.Players.PlayerRemoving:Connect(function(player)
+end)
+
+game.Players.PlayerAdded:Connect(function(player)
+    player.Chatted:Connect(function(message)
+        local args = string.split(message, " ")
+
+        if args[1] == "/경고" then
+            local targetPlayer = game.Players:FindFirstChild(args[2])
+
+            if targetPlayer and tonumber(args[3]) then
+                local currentWarnings = getWarnings(targetPlayer)
+                local newWarnings = currentWarnings + tonumber(args[3])
+
+                setWarnings(targetPlayer, newWarnings)
+            else
+                warn("E003")
+            end
+        elseif args[1] == "/리셋" then
+            local targetPlayer = game.Players:FindFirstChild(args[2])
+
+            if targetPlayer then
+                setWarnings(targetPlayer, 0)
+            else
+                warn("E004")
+            end
+        end
+    end)
+end)
